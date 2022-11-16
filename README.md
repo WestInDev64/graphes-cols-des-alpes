@@ -1,8 +1,8 @@
 # graphes-cols-des-alpes
 
-Projet Algorithme avancé
-Axel Labarre
-Language C
+> Projet Algorithme avancé
+> Axel Labarre
+> Language C
 
 ## Description
 
