@@ -19,7 +19,7 @@ typedef struct vec_sommet
     int nb_sommet;
 } Vec_sommet_t;
 
-typedef enum
+typedef enum    /* Découpage des cellules du csv */
 {
     NOM,
     ALTITUDE,

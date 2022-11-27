@@ -24,3 +24,6 @@ Gros travail de recherche à l'aide de Google Map et d'itinéraire cycliste pour
 
 Manipulation de fichier à l'aide des fonctions de la lib string.h 
 à refactoriser dès que possible.
+
+TODO : Lire le 3eme fichier CSV afin de créer un graphe pondéré
+
