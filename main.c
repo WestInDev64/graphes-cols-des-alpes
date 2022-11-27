@@ -13,8 +13,9 @@ typedef struct sommet
     int altitude;
 } Sommet;
 
-typedef struct vec_sommet{
-    Sommet * s;
+typedef struct vec_sommet
+{
+    Sommet *s;
     int nb_sommet;
 } Vec_sommet_t;
 
@@ -36,14 +37,16 @@ int voir(Graph_t g, int i, int j);
 void placer(Graph_t g, int i, int j, int val);
 void voirgraf(Graph_t g);
 void print_tab2D(int **tab, int lin, int col);
-Vec_sommet_t *alloc_sommet(const char *ccsv, const char *vcsv);
+Vec_sommet_t *alloc_vec_sommet(int size);
+void split_row(char *token, char buff[], const char *separator, Sommet *vec, int nli);
+Vec_sommet_t *extract_sommet(const char *ccsv, const char *vcsv);
 
 int main()
 {
     Graph_t g = creegraphe(10);
     voirgraf(g);
     printf("Liste des cols et villes : \n");
-    Vec_sommet_t * list_sommet = alloc_sommet("Docs/list_cols_alpes.csv", "Docs/list_ville_etapes.csv");
+    Vec_sommet_t *list_sommet = extract_sommet("Docs/list_cols_alpes.csv", "Docs/list_ville_etapes.csv");
     int n = 0;
     printf("Nombre de sommets : %d \n", list_sommet->nb_sommet);
     while (n < list_sommet->nb_sommet)
@@ -105,17 +108,39 @@ void voirgraf(Graph_t g)
     }
 }
 
-/* Création et initialisation d'un pointeur de sommets à partir des csv */
-Vec_sommet_t * alloc_sommet(const char *ccsv, const char *vcsv)
+/* split la ligne par séparateur et renvoi le pointeur sur le 1er char de la lig. */
+void split_row(char *token, char buff[], const char *separator, Sommet *vec, int nli)
 {
-    Vec_sommet_t * vec = NULL; 
+    assert(vec != NULL);
+    char *p = buff;
+    int i = 0;
+    while ((token = strtok(p, separator)) != NULL)
+    {
+        if (i == 0)
+            p = NULL;
+        switch (i)
+        {
+        case NOM:
+            vec[nli].nom = strdup(token);
+            break;
+        case ALTITUDE:
+            vec[nli].altitude = strtol(token, NULL, 10);
+        default:
+            break;
+        }
+        i++;
+    }
+}
+
+/* Création et initialisation d'un pointeur de sommets à partir des csv */
+Vec_sommet_t *extract_sommet(const char *ccsv, const char *vcsv)
+{
+    Vec_sommet_t *vec = NULL;
     FILE *fcol = NULL;
     FILE *fvil = NULL;
     char *token = NULL;
     char buff[BUFF_SIZE];
-    int nb_ligne = 0;
-    int row, colum, c, j;
-
+    int c, j, nb_lines = 0;
 
     /* Ouverture de nos fichiers csv en lecture */
     fcol = fopen(ccsv, "r");
@@ -129,81 +154,50 @@ Vec_sommet_t * alloc_sommet(const char *ccsv, const char *vcsv)
     else
     {
         /* Compte le nb de ligne dans le fichier */
-        while((c = fgetc(fcol)) != EOF)
+        while ((c = fgetc(fcol)) != EOF)
         {
-            if( c == '\n')
-                nb_ligne++;
+            if (c == '\n')
+                nb_lines++;
         }
 
         while ((c = fgetc(fvil)) != EOF)
         {
-            if( c == '\n')
-                nb_ligne++;
+            if (c == '\n')
+                nb_lines++;
         }
-        
+
         /* Replacer les pointeurs au début des fichiers */
         fseek(fcol, 0, SEEK_SET);
         fseek(fvil, 0, SEEK_SET);
 
-        vec = (Vec_sommet_t*)malloc(sizeof(Vec_sommet_t));
-        if(!vec) exit(0);
-        vec->nb_sommet = nb_ligne;
-        vec->s = (Sommet*)malloc(nb_ligne * sizeof(Sommet));
-        if(!vec->s) exit(0);
+        vec = alloc_vec_sommet(nb_lines);
         j = 0;
 
-    
-        while((fgets(buff, BUFF_SIZE, fcol)) != NULL)
+        while ((fgets(buff, BUFF_SIZE, fcol)) != NULL)
         {
-
-            char *p = buff;
-            int i = 0;
-
-            /* split la ligne par séparateur et renvoi le pointeur sur le 1er char de la lig. */
-            while ((token = strtok(p, DELIM)) != NULL)
-            {
-                if (i == 0) p = NULL;
-                switch (i)
-                {
-                case NOM:
-                    vec->s[j].nom = strdup(token);
-                    break;
-                case ALTITUDE:
-                    vec->s[j].altitude = strtol(token, NULL, 10);
-                default:
-                    break;
-                }
-                i++;
-            }
+            split_row(token, buff, DELIM, vec->s, j);
             j++;
         }
 
-        while((fgets(buff, BUFF_SIZE, fvil)) != NULL)
+        while ((fgets(buff, BUFF_SIZE, fvil)) != NULL)
         {
 
-            char *p = buff;
-            int i = 0;
-
-            /* split la ligne par séparateur et renvoi le pointeur sur le 1er char de la lig. */
-            while ((token = strtok(p, DELIM)) != NULL)
-            {
-                if (i == 0) p = NULL;
-                switch (i)
-                {
-                case NOM:
-                    vec->s[j].nom = strdup(token);
-                    break;
-                case ALTITUDE:
-                    vec->s[j].altitude = strtol(token, NULL, 10);
-                default:
-                    break;
-                }
-                i++;
-            }
+            split_row(token, buff, DELIM, vec->s, j);
             j++;
         }
         fclose(fcol);
         fclose(fvil);
     }
+    return vec;
+}
+
+/* Allocation d'un vecteur de Sommet */
+Vec_sommet_t *alloc_vec_sommet(int size)
+{
+    Vec_sommet_t * vec = (Vec_sommet_t *)malloc(sizeof(Vec_sommet_t));
+    assert(vec != NULL);
+    vec->nb_sommet = size;
+    vec->s = (Sommet *)malloc(vec->nb_sommet * sizeof(Sommet));
+    assert(vec->s != NULL);
     return vec;
 }
