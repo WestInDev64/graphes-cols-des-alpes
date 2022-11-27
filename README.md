@@ -11,4 +11,3 @@ Les dénivelés seront représentés par des poids positifs lorsqu’il y a un d
 
 https://www.cols-cyclisme.com/alpes-maritimes/liste-r61.htm
 
-
