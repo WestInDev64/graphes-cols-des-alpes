@@ -25,5 +25,32 @@ Gros travail de recherche à l'aide de Google Map et d'itinéraire cycliste pour
 Manipulation de fichier à l'aide des fonctions de la lib string.h 
 à refactoriser dès que possible.
 
-TODO : Lire le 3eme fichier CSV afin de créer un graphe pondéré
+Ancienne structure avant d'introduire le type liste: 
 
+```c
+typedef struct sommet
+{
+    int id;
+    char *nom;
+    int altitude;
+} Sommet;
+
+typedef struct vec_sommet
+{
+    Sommet *s;
+    int nb_sommet;
+} Vec_sommet_t;
+
+typedef enum /* Découpage des cellules du csv */
+{
+    NOM,
+    ALTITUDE,
+    NB_CHAMPS
+} Sommet_t;
+
+```
+
+
+[x] - TODO : Lire le 3eme fichier CSV afin de construire les arcs du graphe
+
+[] TODO : Faire un makefile
