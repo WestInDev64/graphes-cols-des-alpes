@@ -261,7 +261,7 @@ void ajouterUnArc(Graphe *graph, int src, int cible)
         tmp->suivant = new_node; // link du nouveau noeud en fin de liste
     }
 
-    new_node = new_nodeAdjList(src, graph->table[src].tete->nom, graph->table[src].tete->altitude);
+    new_node = new_nodeAdjList(src, graph->table[src].nom, graph->table[src].altitude);
     assert(new_node);
     if (graph->table[cible].tete == NULL)
     {
@@ -339,7 +339,6 @@ void split_row(char *token, char buff[], const char *separator, AdjList *vec, in
     int i = 0;
     while ((token = strtok(p, separator)) != NULL)
     {
-
         if (i == 0)
             p = NULL;
         switch (i)

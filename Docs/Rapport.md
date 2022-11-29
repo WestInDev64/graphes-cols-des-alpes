@@ -53,4 +53,15 @@ typedef enum /* Découpage des cellules du csv */
 
 [x] - TODO : Lire le 3eme fichier CSV afin de construire les arcs du graphe
 
-[] TODO : Faire un makefile
+[x] TODO : Faire un makefile
+
+Envoyer travail intermédiaire
+
+[] TODO : Refactoriser le code 1 langue 1 convention
+[] TODO : Resoudre fuite de mémoire -> graph->table et char * nom  avec strdup
+[] TODO : split_row() a un paramètre token qui n'est jamais utilisé en dehors de cette fonction. Ca pourrait simplement être une variable locale
+[] TODO : Alternative un peu moins lisible mais qui ne nécessite pas une variable tierce et un test bizarre à l'intérieur pour strtok
+Aucune idée de si ça peut être mieux ou moins bien...
+Faudrait regarder les façons conventionnelles d'utiliser cette fonction
+`for (token = strtok(buff, separator); token != NULL; token = strtok(NULL, separator))`
+[] TODO : Initialiser les valeurs de src et cible à -1 et faire un test ou assert
