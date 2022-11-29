@@ -1,6 +1,7 @@
 SHELL= /bin/sh
 CC= gcc
 CFLAGS= -Wall -Wextra -Wpedantic
+LEAK= -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address -fsanitize=undefined
 PROGNAME= graph_alpes
 VERSION= 1.0.0
 CSRC= main.c
@@ -8,6 +9,9 @@ CSRC= main.c
 OBJ= $(CSRC:.c=.o)
 
 all: $(PROGNAME)
+
+dev: 
+	$(CC) $(CFLAGS) $(LEAK) -g $(CSRC)
 
 $(PROGNAME): $(OBJ)
 	$(CC) $(OBJ) -o $(PROGNAME)
