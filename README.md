@@ -2,7 +2,7 @@
 
 > Projet Algorithme avancé
 > Axel Labarre
-> Language C
+> Langage C
 
 ## Description
 

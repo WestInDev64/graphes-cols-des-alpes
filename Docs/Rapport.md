@@ -65,3 +65,9 @@ Aucune idée de si ça peut être mieux ou moins bien...
 Faudrait regarder les façons conventionnelles d'utiliser cette fonction
 `for (token = strtok(buff, separator); token != NULL; token = strtok(NULL, separator))`
 [] TODO : Initialiser les valeurs de src et cible à -1 et faire un test ou assert
+[] TODO :  On s'en fiche de l'ordre de la liste, alors tu pourrais juste rajouter ton nouvel élément en tête à chaque fois
+
+```c
+new_node->suivant = graph->table[src].tete;
+graph->table[src].tete = new_node;
+```
