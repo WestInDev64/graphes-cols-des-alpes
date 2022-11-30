@@ -45,14 +45,15 @@ typedef struct graphe /* Structure graphe avec Table de liste adjacentes */
 } Graphe;
 
 /* Prototypes des fonctions de notre programme */
-nodeAdjList *new_nodeAdjList(int num, char *nom, int altitude);
-Graphe *newgraph(int n);
+nodeAdjList *new_nodeadjlist(int num, char *nom, int altitude);
+Graphe *new_graph(int n);
 void construire_graph(Graphe *graph, const char *acsv);
-void ajouterUnArc(Graphe *graph, int src, int dest);
+void ajouter_un_arc(Graphe *graph, int src, int dest);
 void print_adjlist(Graphe *grph);
 void split_row(char *token, char buff[], const char *separator, AdjList *vec, int nli);
 Graphe *creer_graph(const char *ccsv, const char *vcsv);
 int compare_token(Graphe *graph, char *token);
+
 
 int main()
 {
@@ -81,7 +82,7 @@ int main()
  *******************************************/
 
 /* Crée un noeud de liste d'adjacence */
-nodeAdjList *new_nodeAdjList(int num, char *nom, int altitude)
+nodeAdjList *new_nodeadjlist(int num, char *nom, int altitude)
 {
     nodeAdjList *noeud = malloc(sizeof(*noeud));
     assert(noeud);
@@ -93,7 +94,7 @@ nodeAdjList *new_nodeAdjList(int num, char *nom, int altitude)
 }
 
 /* Fonction qui crée un graphe vide à n sommets. */
-Graphe *newgraph(int n)
+Graphe *new_graph(int n)
 {
     Graphe *grph = (Graphe *)malloc(sizeof(Graphe));
     assert(grph);
@@ -144,7 +145,7 @@ Graphe *creer_graph(const char *ccsv, const char *vcsv)
                 nb_lines++;
         }
 
-        grph = newgraph(nb_lines);
+        grph = new_graph(nb_lines);
 
         /* Replacer les pointeurs au début des fichiers */
         fseek(fcol, 0, SEEK_SET);
@@ -189,7 +190,7 @@ void construire_graph(Graphe *graph, const char *acsv)
     }
     else
     {
-        // lecture ligne -> ligne du csv cols
+        // lecture ligne -> ligne du csv "accessibles"
         while ((fgets(buff, BUFF_SIZE, facc)) != NULL)
         {
             char *p = buff;
@@ -228,52 +229,33 @@ void construire_graph(Graphe *graph, const char *acsv)
                 }
                 i++;
             }
-            ajouterUnArc(graph, src, cible);
+            ajouter_un_arc(graph, src, cible);
         }
         fclose(facc);
     }
 }
 
 // ajouter un arc entre deux sommets
-void ajouterUnArc(Graphe *graph, int src, int cible)
+void ajouter_un_arc(Graphe *graph, int src, int cible)
 {
     assert(graph);
     /** Ajout d'un arc entre un sommet source et un sommet cible
      * Création d'un nouveau noeud de liste adjacente
      */
-    nodeAdjList *tmp = NULL;
-    nodeAdjList *new_node = new_nodeAdjList(cible, graph->table[cible].nom, graph->table[cible].altitude);
+    int denivele = graph->table[cible].altitude - graph->table[src].altitude;
+    nodeAdjList *new_node = new_nodeadjlist(cible, graph->table[cible].nom, denivele);
     assert(new_node);
 
-    if (graph->table[src].tete == NULL) // si la liste adjacente est vide
-    {
-        new_node->suivant = graph->table[src].tete;
-        graph->table[src].tete = new_node;
-    }
-    else // Sinon on parcours la liste adjacente pour ajouter le nouveau noeud
-    {
-        tmp = graph->table[src].tete; // Pointe sur la tete de la liste
-        while (tmp->suivant != NULL)
-            tmp = tmp->suivant;  // parcours de liste
-        tmp->suivant = new_node; // link du nouveau noeud en fin de liste
-    }
+    /* Pas besoin que la liste soit trié alors autant ajouter le neud en tete de liste */
+    new_node->suivant = graph->table[src].tete;
+    graph->table[src].tete = new_node;
 
-    new_node = new_nodeAdjList(src, graph->table[src].nom, graph->table[src].altitude);
+    denivele = graph->table[src].altitude - graph->table[cible].altitude;
+    new_node = new_nodeadjlist(src, graph->table[src].nom, denivele);
     assert(new_node);
-    if (graph->table[cible].tete == NULL)
-    {
-        new_node->suivant = graph->table[cible].tete;
-        graph->table[cible].tete = new_node;
-    }
-    else
-    {
-        tmp = graph->table[cible].tete;
-        while (tmp->suivant != NULL)
-        {
-            tmp = tmp->suivant;
-        }
-        tmp->suivant = new_node;
-    }
+    new_node->suivant = graph->table[cible].tete;
+    graph->table[cible].tete = new_node;
+
 }
 
 /* Fonctions qui affiche les tableaux des accessibles et des distances */
@@ -318,10 +300,10 @@ void print_adjlist(struct graphe *grph)
     for (v = 0; v < grph->nbs; v++)
     {
         nodeAdjList *temp = grph->table[v].tete;
-        printf("\n Liste d'adjacence de %d : \n head ", v);
+        printf("\n Liste d'adjacence de %d - %s : \n head ", v, grph->table[v].nom);
         while (temp != NULL)
         {
-            printf("\n -> (%d, %d m)", temp->id, temp->altitude);
+            printf("\n -> (%d \"%s\", deniv: %d m)", temp->id, temp->nom, temp->altitude);
             temp = temp->suivant;
         }
         printf("\n");
