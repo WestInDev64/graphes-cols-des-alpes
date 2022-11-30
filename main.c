@@ -52,6 +52,7 @@ void ajouterUnArc(Graphe *graph, int src, int dest);
 void print_adjlist(Graphe *grph);
 void split_row(char *token, char buff[], const char *separator, AdjList *vec, int nli);
 Graphe *creer_graph(const char *ccsv, const char *vcsv);
+int compare_token(Graphe *graph, char *token);
 
 int main()
 {
@@ -177,7 +178,7 @@ void construire_graph(Graphe *graph, const char *acsv)
     FILE *facc = NULL;
     char *token = NULL;
     char buff[BUFF_SIZE];
-    int src = 0, cible = 0;
+    int src, cible;
 
     facc = fopen(acsv, "r");
 
@@ -193,6 +194,8 @@ void construire_graph(Graphe *graph, const char *acsv)
         {
             char *p = buff;
             int i = 0;
+            src = -1;
+            cible = -1;
             // strtok permet d'extraire les token d'une string specifier par des separators
             while ((token = strtok(p, DELIM)) != NULL)
             {
@@ -202,28 +205,22 @@ void construire_graph(Graphe *graph, const char *acsv)
                 {
                 case SRC:
                 {
-                    // strdup permet de dupliquer une string
-                    char *str_source = strdup(token);
-                    if(!str_source) exit(0);
-                    for (int k = 0; k < graph->nbs; k++)
+                    src = compare_token(graph, token);
+                    if (src == -1) // si -1 le sommet n'existe pas dans la table
                     {
-                        if (strcmp(str_source, graph->table[k].nom) == 0){
-                            src = k;
-                        }
+                        printf("Erreur: Sommet source \"%s\" inexistant\n", token);
+                        exit(0);
                     }
-                    free(str_source);
                     break;
                 }
                 case CIBLE:
                 {
-                    char *str_cible = strdup(token);
-                    if(!str_cible) exit(0);
-                    for (int k = 0; k < graph->nbs; k++)
+                    cible = compare_token(graph, token);
+                    if (cible == -1) // si -1 le sommet n'existe pas dans la table
                     {
-                        if (strcmp(str_cible, graph->table[k].nom) == 0)
-                            cible = k;
+                        printf("Erreur: Sommet cible \"%s\" inexistant\n", token);
+                        exit(0);
                     }
-                    free(str_cible);
                     break;
                 }
                 default:
@@ -354,4 +351,25 @@ void split_row(char *token, char buff[], const char *separator, AdjList *vec, in
         }
         i++;
     }
+}
+
+/* Comparaison de token de string avec strdup et strcomp */
+int compare_token(Graphe *graph, char *token)
+{
+    assert(graph);
+    assert(token);
+    char *str = strdup(token);
+    assert(str);
+    int code_retour = 0;
+    int result = -1;
+    for (int k = 0; (k < graph->nbs) && (code_retour == 0); k++)
+    {
+        if (strcmp(str, graph->table[k].nom) == 0)
+        {
+            result = k;
+            code_retour = 1;
+        }
+    }
+    free(str);
+    return result;
 }
