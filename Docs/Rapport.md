@@ -58,7 +58,9 @@ Envoyer travail intermédiaire
 
 [] TODO : Refactoriser le code 1 langue 1 convention
 [] TODO : Resoudre fuite de mémoire -> graph->table et char * nom  avec strdup
+
 [x] TODO : split_row() a un paramètre token qui n'est jamais utilisé en dehors de cette fonction. Ca pourrait simplement être une variable locale
+
 [] TODO : Alternative un peu moins lisible mais qui ne nécessite pas une variable tierce et un test bizarre à l'intérieur pour strtok
 Aucune idée de si ça peut être mieux ou moins bien...
 Faudrait regarder les façons conventionnelles d'utiliser cette fonction
@@ -72,3 +74,7 @@ graph->table[src].tete = new_node;
 ```
 
 [x] TODO : Assigner dans les noeuds des listes adjacentes le dénivelé ascendant ou descendant par rapport au noeud source
+
+[] TODO : Integrer L'alogithme de Floyd Marshall
+
+[x] TODO : Décomposer son code
