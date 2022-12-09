@@ -21,4 +21,4 @@ $(PROGNAME): $(OBJ)
 	$(CC) $(CFLAGS) -c $<
 
 clean: 
-	@rm -f $(OBJ) $(PROGNAME)
+	@rm -rf $(OBJ) $(PROGNAME) *.out *.dSYM

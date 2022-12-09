@@ -30,5 +30,6 @@ typedef struct AdjList
 nodeAdjList *new_nodeadjlist(int num, char *nom, int altitude);
 void affiche_adjlist(Graphe *grph);
 int est_membre( nodeAdjList * l, int id);
+void print_list(nodeAdjList *l);
 
 #endif // LISTEADJ_H

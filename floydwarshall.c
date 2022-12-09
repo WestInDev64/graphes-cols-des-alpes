@@ -17,8 +17,6 @@ Mat creer_matrice( Graphe * grph, int nb)
         }
         
     }
-    
-
 
     return m;
 }

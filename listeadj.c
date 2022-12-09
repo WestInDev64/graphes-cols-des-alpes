@@ -43,47 +43,20 @@ int est_membre( nodeAdjList * l , int id)
 {
     assert(l);
     assert(id >= 0);
-    int res = 0;
-    while(l->suivant != NULL){
+    while(l != NULL){
         if (id == l->id){
-            res = 1;
+            return 1;
         }
         l = l->suivant;
     }
-    return res;
-}
-
-
-int main()
-{
-
-    nodeAdjList * node1 = new_nodeadjlist(1,"test1",123);
-    nodeAdjList * node2 = new_nodeadjlist(2,"test2",123);
-    nodeAdjList * node3 = new_nodeadjlist(3,"test3",123);
-    nodeAdjList * node4 = new_nodeadjlist(4,"test4",123);
-    nodeAdjList * node5 = new_nodeadjlist(5,"test5",123);
-
-    node5->suivant = node3;
-    node3->suivant = node1;
-    node1->suivant = node4;
-    node4->suivant = node2;
-
-    AdjList * li = (AdjList *) malloc(sizeof(AdjList));
-    assert(li);
-    li->id = 6;
-    li->nom = "Col de test";
-    li->altitude = 50;
-    li->tete = node5;
-
-    int res = est_membre(li->tete, 2);
-    printf("res = %d \n", res);
-
-    assert(est_membre(li->tete,3) == 1);
-    assert(est_membre(li->tete,7) == 0);
-    assert(est_membre(li->tete,5) == 1);
-    assert(est_membre(li->tete,1) == 1);
-
-    free(li);
     return 0;
 }
+
+void print_list(nodeAdjList *l){
+    if (l != NULL){
+        printf("%d ", l->id);
+        print_list(l->suivant);
+    }
+}
+
 
