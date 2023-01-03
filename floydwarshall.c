@@ -1,70 +1,367 @@
 #include "floydwarshall.h"
 #include "graphe.h"
+#include "listeadj.h"
+#include <stddef.h>
+#include <assert.h>
+#include <stdio.h>
 
-Mat creer_matrice( Graphe * grph, int nb)
+/**
+ * Initialisation de la Matrice,
+ * Parcours de la matrice
+ * si sommet source == sommet destination -> 0
+ * sinon si le sommet destination est un sommet accessible depuis le sommet source
+ *       alors on le selectionne et on assigne la valeur de l'altitude
+ * sinon on initialise le sommet avec une valeur MAXI INF
+ * @param grph : Pointeur de Graphe des sommets
+ * @param m : pointeur de Matrice des distances
+ * @param pred : pointeur de Matrice des prédécesseurs
+ */
+void init_matrice(Graphe *grph, Mat *m, Mat *pred)
 {
+    assert(grph);
+    assert(m);
+    assert(pred);
+    m->nbs = grph->nbs;
+    pred->nbs = grph->nbs;
+    nodeAdjList *temp = NULL;
 
-    Mat m;
-    int i, j;
-    m.nbs = nb;
-    for (int i = 0; i < nb; i++)
+    for (int i = 0; i < grph->nbs; i++)
     {
-        for (int j = 0; j < nb; j++)
+        for (int j = 0; j < grph->nbs; j++)
         {
             if (i == j)
-                m.mat[i][j] = 0;
-            else if( grph->table[i].id)
+            {
+                m->mat[i][j] = 0;
+                pred->mat[i][j] = i;
+            }
+            else if (est_membre(grph->table[i].tete, j) == 1)
+            {
+                temp = select_node(grph->table[i].tete, j);
+                assert(temp);
+                m->mat[i][j] = temp->altitude;
+                pred->mat[i][j] = i;
+            }
+            else
+            {
+                m->mat[i][j] = INF;
+                pred->mat[i][j] = -1;
+            }
         }
-        
     }
-
-    return m;
 }
 
-/*
-
- = (int **)malloc(grph->nbs * sizeof(int *));
-    if (!mat)
-        EXIT_FAILURE;
-
-    // Initialisation de la matrice
-    for (i = 0; i < grph->nbs ; i++)
-    {
-        (mat)[i] = (int *)malloc(grph->nbs * sizeof(int));
-        if (!(mat)[i])
-            EXIT_FAILURE;
-        for (j = 0; j < grph->nbs; j++)
-        {
-            if (i == j)
-                mat[i][j] = 0;
-            else if (grph->adj[i][j] > 0)
-                mat[i][j] = grph->adj[i][j];
-            else
-                mat[i][j] = INF;
-        }
-    }
-
-} */
-
-/* Algorithme de Floyd-Marshall, avec initialisation de la matrice de départ à partir de la matrice d'adjacence */
-int *floydwarshall(Graphe *grph, int src)
+/**
+ * Algortithme de Floyd Warshall
+ * On stocke les distances pour chaque paire de sommet
+ * Et on met à jour cette martrice à chaque étape en utilisant
+ * la formule du minimum entre la distance du src et dest et k un sommet intermédiaire
+ * En d'autres termes la distance entre i et j est égale au minimum de la distance actuelle
+ * entre i et j et la distance entre i et k + k et j.
+ */
+void floydwarshall(Mat *m, Mat *pred)
 {
+    assert(m);
+    assert(pred);
     int i, j, k;
-    // Déclaration d'une matrice
-
     // Algo de Floyd
-    for (k = 0; k < grph->nbs; k++)
+    for (k = 0; k < m->nbs; k++)
     {
-        for (i = 0; i < grph->nbs; i++)
+        for (i = 0; i < m->nbs; i++)
         {
-            for (j = 0; j < grph->nbs; j++)
+            for (j = 0; j < m->nbs; j++)
             {
-                if (mat[i][k] != INF && mat[k][j] != INF && (mat[i][k] + mat[k][j]) < mat[i][j])
+                if (m->mat[i][k] != INF && m->mat[k][j] != INF && (m->mat[i][k] + m->mat[k][j]) < m->mat[i][j])
                 {
-                    mat[i][j] = mat[i][k] + mat[k][j];
+                    m->mat[i][j] = m->mat[i][k] + m->mat[k][j];
+                    pred->mat[i][j] = pred->mat[k][j];
                 }
             }
         }
     }
-    return (mat)[src];
+}
+
+
+void itineraryAtoB(Mat * pred, int src, int dst, Graphe * grph)
+{
+    assert(pred);
+    assert(grph);
+    int i,k;
+    int chemin[pred->nbs];
+
+    // Initialisation du vecteur chemin à -1
+    for(k = 0 ; k < pred->nbs ; k++){
+        chemin[k] = -1;
+    }
+
+    k = dst;
+    i = 0;
+    while( k != src){
+        chemin[i] = k;
+        k = pred->mat[src][k];
+        i++; 
+    }
+
+    chemin[i] = src;
+    printf("\nVoici le chemin pour aller de 🔰%s à 🏁%s : \n", grph->table[src].nom, grph->table[dst].nom);
+    for( k = i ; k > 0 ; k--){
+        printf(" -> %s - %d m\n", grph->table[chemin[k]].nom, grph->table[chemin[k]].altitude);
+    }
+    printf(" 🏁 %s - %d m \n", grph->table[chemin[0]].nom, grph->table[chemin[0]].altitude);
+
+}
+
+
+// écrire les plus courts chemins en consultant les tableaux m et pred
+void ecrirePlusCourt(Graphe *graphe, Mat *m, Mat *pred)
+{
+    printf("\n\nPlus court chemin (Floyd)\n");
+    for (int i = 0; i < graphe->nbs; i++)
+    {
+        printf("pour aller de %s à :\n", graphe->table[i].nom);
+        for (int j = 0; j < graphe->nbs; j++)
+        {
+            if ((i != j) && (m->mat[i][j] != INF))
+            {
+                printf(" %s (cout = %d) : ",
+                       graphe->table[j].nom, m->mat[i][j]);
+                int k = pred->mat[i][j];
+                printf("%s, %s", graphe->table[j].nom, graphe->table[k].nom);
+                while (k != i)
+                {
+                    k = pred->mat[i][k];
+                    printf(", %s ", graphe->table[k].nom);
+                }
+                printf("\n");
+            }
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+void ecrirePlusCourtUnChemin(Graphe *graphe, Mat *m, Mat *pred, int src)
+{
+
+    printf("pour aller de %s à :\n", graphe->table[src].nom);
+    for (int j = 0; j < graphe->nbs; j++)
+    {
+        if ((src != j) && (m->mat[src][j] != INF))
+        {
+            printf(" %s (cout = %d) : ",
+                   graphe->table[j].nom, m->mat[src][j]);
+            int k = pred->mat[src][j];
+            printf("%s, %s", graphe->table[j].nom, graphe->table[k].nom);
+            while (k != src)
+            {
+                k = pred->mat[src][k];
+                printf(", %s ", graphe->table[k].nom);
+            }
+            printf("\n");
+        }
+    }
+    printf("\n");
+}
+
+void print_matrice2D(Mat *m, int lin, int col, int digit)
+{
+    if (!m)
+    {
+        printf("Error Ref Matrice NULL \n");
+        return;
+    }
+    int i, j, k;
+    // TITLE
+    printf("\n/*=====┌ ┐ ─── = ├ ┤ └ ┘ │ =====Affichage Matrice 2D=============*/\n");
+    printf("\n\t");
+
+    switch (digit)
+    {
+    case 2:
+        // HEADER
+        for (int h = 0; h < col; h++)
+        {
+            printf("  %02d ", h);
+        }
+        printf("\n\n");
+        for (i = 0; i < lin; i++)
+        {
+            if (i == 0)
+            {
+                // TOP LINE
+                printf("\t┌");
+                for (k = 0; k < (col - 1); k++)
+                    printf("────┬");
+                printf("────┐\n");
+            }
+            else
+            {
+                // INTERSEC LINE
+                printf("\n\t├");
+                for (k = 0; k < (col - 1); k++)
+                    printf("────┼");
+                printf("────┤\n");
+            }
+            printf(" %02d\t│", i);
+            for (j = 0; j < col; j++)
+            {
+                printf(" %4d │", m->mat[i][j]);
+            }
+        }
+        // BOT LINE
+        printf("\n\t└");
+        for (k = 0; k < (col - 1); k++)
+            printf("────┴");
+        printf("────┘\n");
+
+        break;
+
+    case 4:
+        // HEADER
+        for (int h = 0; h < col; h++)
+        {
+            printf("  %04d ", h);
+        }
+        printf("\n\n");
+        for (i = 0; i < lin; i++)
+        {
+            if (i == 0)
+            {
+                // TOP LINE
+                printf("\t┌");
+                for (k = 0; k < (col - 1); k++)
+                    printf("──────┬");
+                printf("──────┐\n");
+            }
+            else
+            {
+                // mLE LINE
+                printf("\n\t├");
+                for (k = 0; k < (col - 1); k++)
+                    printf("──────┼");
+                printf("──────┤\n");
+            }
+            printf(" %04d\t│", i);
+
+            for (j = 0; j < col; j++)
+            {
+                printf(" %4d │", m->mat[i][j]);
+            }
+        }
+        // BOTTOM LINE
+        printf("\n\t└");
+        for (k = 0; k < (col - 1); k++)
+            printf("──────┴");
+        printf("──────┘\n");
+
+        break;
+    case 0:
+        // HEADER
+        for (int h = 0; h < col; h++)
+        {
+            printf(" %05d ", h);
+        }
+        printf("\n\n");
+        for (i = 0; i < lin; i++)
+        {
+            if (i == 0)
+            {
+                // TOP LINE
+                printf("\t");
+                for (k = 0; k < (col - 1); k++)
+                    printf("-------");
+                printf("\n");
+            }
+            else
+            {
+                printf("\n");
+            }
+            printf(" %05d\t|", i);
+            for (j = 0; j < col; j++)
+            {
+                printf(" %5d ", m->mat[i][j]);
+            }
+        }
+        // BOTTOM LINE
+        printf("\n\t");
+        for (k = 0; k < (col - 1); k++)
+            printf("-------");
+        printf("\n");
+
+        break;
+    default:
+        break;
+    }
+    printf("\n");
+}
+
+void print_vector(int *vec, int nb)
+{
+    if (!vec)
+    {
+        printf("Error Ref Vector NULL \n");
+        return;
+    }
+    int i, k;
+    // TITLE
+    printf("\n/* ========================== Affichage Vector ============================= */\n");
+
+    printf("\n");
+    // HEADER
+    for (int h = 0; h < nb; h++)
+    {
+        printf("  %04d ", h);
+    }
+    // TOP LINE
+    printf("\n┌");
+    for (k = 0; k < (nb - 1); k++)
+    {
+        printf("──────┬");
+    }
+    printf("──────┐\n");
+
+    // VECTOR
+    printf("│");
+    for (i = 0; i < nb; i++)
+    {
+        printf(" %4d │", vec[i]);
+    }
+
+    // BOTTOM LINE
+    printf("\n└");
+    for (k = 0; k < (nb - 1); k++)
+        printf("──────┴");
+    printf("──────┘\n");
+}
+
+void ecrireEtape(Mat *a, Mat *p, int k, int ns)
+{
+    if (k == -1)
+    {
+        printf("Matrices initiales de court et de dernier sommet visité\n");
+    }
+    else
+    {
+        printf("Passage par le sommet numéro %d\n", k);
+    }
+    for (int i = 0; i < ns; i++)
+    {
+        for (int j = 0; j < ns; j++)
+        {
+            if (a->mat[i][j] == INF)
+            {
+                printf(" %3s", "*");
+            }
+            else
+            {
+                printf(" %3d", a->mat[i][j]);
+            }
+        }
+        printf("%6s", " ");
+        for (int j = 0; j < ns; j++)
+        {
+            printf("%d", p->mat[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
 }

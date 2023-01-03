@@ -31,5 +31,6 @@ nodeAdjList *new_nodeadjlist(int num, char *nom, int altitude);
 void affiche_adjlist(Graphe *grph);
 int est_membre( nodeAdjList * l, int id);
 void print_list(nodeAdjList *l);
+nodeAdjList *select_node(nodeAdjList *l, int id);
 
 #endif // LISTEADJ_H

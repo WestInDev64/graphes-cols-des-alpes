@@ -2,9 +2,15 @@
 #define FLOYDWARSHALL_H
 
 #include "graphe.h"
+//////////////////////////////////////
+// Algorithme de Floyd Marshall
+//   - Structure Matrice Adjacente
+//             //
+//////////////////////////////////////
 
+#define INF 999999
 #define MAXMAT 256
-
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
 typedef int matrice[MAXMAT][MAXMAT];
 
 typedef struct mat
@@ -13,11 +19,15 @@ typedef struct mat
     matrice mat;
 } Mat;
 
+void floydwarshall(Mat *m, Mat * pred);
+void init_matrice(Graphe *grph, Mat *m, Mat * pred);
 
+void print_matrice2D(Mat *m, int lin, int col, int digit);
+void print_vector(int *vec, int nb);
+void itineraryAtoB(Mat * pred, int src, int dst, Graphe * grph);
+void ecrirePlusCourt(Graphe *graphe, Mat * m, Mat * pred);
+void ecrirePlusCourtUnChemin(Graphe *graphe, Mat *m, Mat *pred, int src);
+void ecrireEtape(Mat *a, Mat *p, int k, int ns);
 
-int *floydwarshall(Graphe *grph, int src);
-Mat creer_matrice(Graphe *grph, int nb);
 
 #endif // FLOYDWAGraphe_H
-#endif // FLOYDWARSHALL_H#include "graphe.h"
-

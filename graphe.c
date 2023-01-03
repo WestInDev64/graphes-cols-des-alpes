@@ -226,3 +226,17 @@ int compare_token(Graphe *graph, char *token)
     free(str);
     return result;
 }
+
+void affiche_liste_sommets(Graphe * grph) {
+    printf("Nombre de sommets : %d \n\n",grph->nbs);
+    int n = 0;
+    while (n < grph->nbs)
+    {
+        printf("%3d\t%34s\t%6d m\n", 
+            grph->table[n].id, 
+            grph->table[n].nom, 
+            grph->table[n].altitude);
+        n++;
+    }
+    printf("\n");
+}

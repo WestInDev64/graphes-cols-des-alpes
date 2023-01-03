@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <time.h>
 #include "graphe.h"
-#include "utiles.h"
 #include "listeadj.h"
 
 int main()

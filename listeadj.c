@@ -39,9 +39,8 @@ void affiche_adjlist(Graphe *grph)
 }
 
 
-int est_membre( nodeAdjList * l , int id)
+int est_membre(nodeAdjList * l , int id)
 {
-    assert(l);
     assert(id >= 0);
     while(l != NULL){
         if (id == l->id){
@@ -59,4 +58,18 @@ void print_list(nodeAdjList *l){
     }
 }
 
-
+nodeAdjList * select_node(nodeAdjList *l, int id)
+{
+    nodeAdjList *temp = NULL;
+    int code_success = 0;
+    while (l != NULL && code_success == 0)
+    {
+        if (l->id == id)
+        {
+            temp = l;
+            code_success = 1;
+        }
+            l = l->suivant;
+    }
+    return temp;
+}

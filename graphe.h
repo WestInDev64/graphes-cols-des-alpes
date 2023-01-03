@@ -37,5 +37,6 @@ void construire_graph(Graphe *graph, const char *acsv);
 void ajouter_un_arc(Graphe *graph, int src, int dest);
 void split(char *token, char buff[], const char *separator, struct AdjList *vec, int nli);
 int compare_token(Graphe *graph, char *token);
+void affiche_liste_sommets(Graphe * grph);
 
 #endif // GRAPHE_H
