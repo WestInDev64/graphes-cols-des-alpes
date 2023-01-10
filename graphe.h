@@ -13,7 +13,7 @@ typedef struct graphe
 } Graphe;
 
 /* Enum de découpage des cellules du csv */
-typedef enum 
+typedef enum
 {
     NOM,
     ALTITUDE,
@@ -21,7 +21,7 @@ typedef enum
 } Column;
 
 /* Enum de découpage des cellules du csv */
-typedef enum 
+typedef enum
 {
     SRC,
     CIBLE,

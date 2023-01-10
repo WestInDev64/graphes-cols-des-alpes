@@ -6,9 +6,9 @@
 #include <time.h>
 
 /* Crée un noeud de liste d'adjacence */
-nodeAdjList *new_nodeadjlist(int num, char *nom, int altitude)
+AdjList *new_AdjList(int num, char *nom, int altitude)
 {
-    nodeAdjList *noeud = malloc(sizeof(*noeud));
+    AdjList *noeud = malloc(sizeof(*noeud));
     assert(noeud);
     noeud->id = num;
     noeud->nom = nom;
@@ -24,13 +24,13 @@ void affiche_adjlist(Graphe *grph)
     int v;
     for (v = 0; v < grph->nbs; v++)
     {
-        nodeAdjList *temp = grph->table[v].tete;
+        AdjList *temp = grph->table[v].suivant;
         printf("\nListe d'adjacence de %d - %s : \n head ", v, grph->table[v].nom);
         while (temp != NULL)
         {
-            printf("\n -> (%d \"%s\", deniv: %d m)", 
-                                    temp->id, 
-                                    temp->nom, 
+            printf("\n -> (%d \"%s\", deniv: %d m)",
+                                    temp->id,
+                                    temp->nom,
                                     temp->altitude);
                                     temp = temp->suivant;
         }
@@ -39,7 +39,7 @@ void affiche_adjlist(Graphe *grph)
 }
 
 
-int est_membre(nodeAdjList * l , int id)
+int est_membre(AdjList * l , int id)
 {
     assert(id >= 0);
     while(l != NULL){
@@ -51,16 +51,16 @@ int est_membre(nodeAdjList * l , int id)
     return 0;
 }
 
-void print_list(nodeAdjList *l){
+void print_list(AdjList *l){
     if (l != NULL){
         printf("%d ", l->id);
         print_list(l->suivant);
     }
 }
 
-nodeAdjList * select_node(nodeAdjList *l, int id)
+AdjList * select_node(AdjList *l, int id)
 {
-    nodeAdjList *temp = NULL;
+    AdjList *temp = NULL;
     int code_success = 0;
     while (l != NULL && code_success == 0)
     {

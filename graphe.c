@@ -30,7 +30,7 @@ Graphe *new_graph(int n)
         grph->table[i].id = i;
         grph->table[i].nom = NULL;
         grph->table[i].altitude = 0;
-        grph->table[i].tete = NULL;
+        grph->table[i].suivant = NULL;
     }
     return grph;
 }
@@ -167,18 +167,18 @@ void ajouter_un_arc(Graphe *graph, int src, int cible)
      * Création d'un nouveau noeud de liste adjacente
      */
     int denivele = graph->table[cible].altitude - graph->table[src].altitude;
-    nodeAdjList *new_node = new_nodeadjlist(cible, graph->table[cible].nom, denivele);
+    AdjList *new_node = new_AdjList(cible, graph->table[cible].nom, denivele);
     assert(new_node);
 
     /* Pas besoin que la liste soit trié alors autant ajouter le neud en tete de liste */
-    new_node->suivant = graph->table[src].tete;
-    graph->table[src].tete = new_node;
+    new_node->suivant = graph->table[src].suivant;
+    graph->table[src].suivant = new_node;
 
     denivele = graph->table[src].altitude - graph->table[cible].altitude;
-    new_node = new_nodeadjlist(src, graph->table[src].nom, denivele);
+    new_node = new_AdjList(src, graph->table[src].nom, denivele);
     assert(new_node);
-    new_node->suivant = graph->table[cible].tete;
-    graph->table[cible].tete = new_node;
+    new_node->suivant = graph->table[cible].suivant;
+    graph->table[cible].suivant = new_node;
 }
 
 /* split la ligne par séparateur et renvoi un pointeur sur le 1er char de la ligne. */
@@ -232,9 +232,9 @@ void affiche_liste_sommets(Graphe * grph) {
     int n = 0;
     while (n < grph->nbs)
     {
-        printf("%3d\t%34s\t%6d m\n", 
-            grph->table[n].id, 
-            grph->table[n].nom, 
+        printf("%3d\t%34s\t%6d m\n",
+            grph->table[n].id,
+            grph->table[n].nom,
             grph->table[n].altitude);
         n++;
     }

@@ -24,7 +24,7 @@ void init_matrice(Graphe *grph, Mat *m, Mat *pred)
     assert(pred);
     m->nbs = grph->nbs;
     pred->nbs = grph->nbs;
-    nodeAdjList *temp = NULL;
+    AdjList *temp = NULL;
 
     for (int i = 0; i < grph->nbs; i++)
     {
@@ -35,9 +35,9 @@ void init_matrice(Graphe *grph, Mat *m, Mat *pred)
                 m->mat[i][j] = 0;
                 pred->mat[i][j] = i;
             }
-            else if (est_membre(grph->table[i].tete, j) == 1)
+            else if (est_membre(grph->table[i].suivant, j) == 1)
             {
-                temp = select_node(grph->table[i].tete, j);
+                temp = select_node(grph->table[i].suivant, j);
                 assert(temp);
                 m->mat[i][j] = temp->altitude;
                 pred->mat[i][j] = i;
@@ -132,7 +132,7 @@ void itineraryAtoB(Mat *pred, int src, int dst, Graphe *grph, Path * p)
         i++;
     }
     chemin[i] = src;
-    
+
     // Inversement du chemin et initialisation Path
     p->size = i+1;
     p->path = (int*)malloc(sizeof(int)* p->size);
