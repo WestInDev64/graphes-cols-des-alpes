@@ -14,7 +14,6 @@ Lé départ en tant que sommet intermédiaire
 
 Les arcs de poids négatifs ou positifs selon le dénivelé
 
-Poser la question à Bourdin concernant la connexité du GRAPHE
 
 ## Etablir un peu plus de connexité entre les cols
 
@@ -54,9 +53,9 @@ typedef enum /* Découpage des cellules du csv */
 
 [x] TODO : Faire un makefile
 
-Envoyer travail intermédiaire
+[x] TODO : Envoyer travail intermédiaire
 
-[] TODO : Refactoriser le code 1 langue 1 convention
+[x] TODO : Refactoriser le code 1 langue 1 convention
 [] TODO : Resoudre fuite de mémoire -> graph->table et char * nom  avec strdup
 
 [x] TODO : split_row() a un paramètre token qui n'est jamais utilisé en dehors de cette fonction. Ca pourrait simplement être une variable locale
@@ -66,7 +65,7 @@ Aucune idée de si ça peut être mieux ou moins bien...
 Faudrait regarder les façons conventionnelles d'utiliser cette fonction
 `for (token = strtok(buff, separator); token != NULL; token = strtok(NULL, separator))`
 [x] TODO : Initialiser les valeurs de src et cible à -1 et faire un test ou assert
-[x] TODO :  On s'en fiche de l'ordre de la liste, alors tu pourrais juste rajouter ton nouvel élément en tête à chaque fois
+[x] TODO :  On s'en fiche de l'ordre de la liste, alors je pourrais juste rajouter un nouvel élément en tête à chaque fois
 
 ```c
 new_node->suivant = graph->table[src].tete;
@@ -75,6 +74,6 @@ graph->table[src].tete = new_node;
 
 [x] TODO : Assigner dans les noeuds des listes adjacentes le dénivelé ascendant ou descendant par rapport au noeud source
 
-[] TODO : Integrer L'alogithme de Floyd Marshall
+[x] TODO : Integrer L'alogithme de Floyd Marshall
 
 [x] TODO : Décomposer son code

@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /**
  * Initialisation de la Matrice,
@@ -70,6 +71,7 @@ void floydwarshall(Mat *m, Mat *pred)
         {
             for (j = 0; j < m->nbs; j++)
             {
+
                 if (m->mat[i][k] != INF && m->mat[k][j] != INF && (m->mat[i][k] + m->mat[k][j]) < m->mat[i][j])
                 {
                     m->mat[i][j] = m->mat[i][k] + m->mat[k][j];
@@ -80,35 +82,79 @@ void floydwarshall(Mat *m, Mat *pred)
     }
 }
 
+/**
+ * Calcul le dénivelé cumulé positif d'un chemin
+ * @param k : Sommet intermédiaire actuel
+ * @param grph : Pointeur du graphe (vecteur des sommets)
+ * @param predpath : vecteur de sommet des prédecesseurs
+*/
+int elevation_gain( Graphe *grph,Mat * pred, Path * p)
+{
+    assert(grph);
+    assert(pred);
+    assert(p);
+    int gain = 0;
+    int i;
+    int current;
+    int next;
+    for (i = 0; i < p->size-1; i++)
+    {
+        current = p->path[i];
+        next = p->path[i+1];
+        if (grph->table[current].altitude < grph->table[next].altitude)
+        {
+            gain += grph->table[next].altitude - grph->table[current].altitude;
+        }
+    }
+    return gain;
+}
 
-void itineraryAtoB(Mat * pred, int src, int dst, Graphe * grph)
+void itineraryAtoB(Mat *pred, int src, int dst, Graphe *grph, Path * p)
 {
     assert(pred);
     assert(grph);
-    int i,k;
+    assert(p);
+    int i, k;
     int chemin[pred->nbs];
 
     // Initialisation du vecteur chemin à -1
-    for(k = 0 ; k < pred->nbs ; k++){
+    for (k = 0; k < pred->nbs; k++)
+    {
         chemin[k] = -1;
     }
 
     k = dst;
     i = 0;
-    while( k != src){
+    while (k != src)
+    {
         chemin[i] = k;
         k = pred->mat[src][k];
-        i++; 
+        i++;
     }
-
     chemin[i] = src;
-    printf("\nVoici le chemin pour aller de 🔰%s à 🏁%s : \n", grph->table[src].nom, grph->table[dst].nom);
-    for( k = i ; k > 0 ; k--){
-        printf(" -> %s - %d m\n", grph->table[chemin[k]].nom, grph->table[chemin[k]].altitude);
+    
+    // Inversement du chemin et initialisation Path
+    p->size = i+1;
+    p->path = (int*)malloc(sizeof(int)* p->size);
+    assert(p->path);
+    int j = 0;
+    for(k = p->size -1 ; k >= 0 ; k--){
+        p->path[j] = chemin[k];
+        j++;
     }
-    printf(" 🏁 %s - %d m \n", grph->table[chemin[0]].nom, grph->table[chemin[0]].altitude);
-
 }
+
+void print_itinerary(Graphe * grph,Path * p, int src, int dst){
+    assert(grph);
+    assert(p);
+    int k;
+    printf("\nVoici le chemin pour aller de 🔰%s à 🏁%s : \n", grph->table[src].nom, grph->table[dst].nom);
+    for (k = 0; k < p->size; k++)
+    {
+        printf(" -> %s - %d m\n", grph->table[p->path[k]].nom, grph->table[p->path[k]].altitude);
+    }
+}
+
 
 
 // écrire les plus courts chemins en consultant les tableaux m et pred
