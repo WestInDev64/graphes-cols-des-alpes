@@ -17,22 +17,22 @@ int main()
     AdjList *node4 = new_AdjList(4, "test4", 123);
     AdjList *node5 = new_AdjList(5, "test5", 123);
 
-    node5->suivant = node3;
-    node3->suivant = node1;
-    node1->suivant = node4;
-    node4->suivant = node2;
+    node5->next = node3;
+    node3->next = node1;
+    node1->next = node4;
+    node4->next = node2;
 
     AdjList *li = (AdjList *)malloc(sizeof(AdjList));
     assert(li);
     li->id = 6;
     li->nom = "Col de test";
     li->altitude = 50;
-    li->suivant = node5;
+    li->next = node5;
 
     print_list(node5);
     printf("\n");
 
-    int res = est_membre(li->suivant, 2);
+    int res = est_membre(li->next, 2);
     printf("res = %d \n", res);
 
 
@@ -42,10 +42,10 @@ int main()
     int id = memberlist->id;
     printf("id noeud selectionné: %d \n", id);
 
-    assert(est_membre(li->suivant, 3) == 1);
-    assert(est_membre(li->suivant, 7) == 0);
-    assert(est_membre(li->suivant, 5) == 1);
-    assert(est_membre(li->suivant, 1) == 1);
+    assert(est_membre(li->next, 3) == 1);
+    assert(est_membre(li->next, 7) == 0);
+    assert(est_membre(li->next, 5) == 1);
+    assert(est_membre(li->next, 1) == 1);
     assert(id == 2);
 
     free(li);

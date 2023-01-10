@@ -13,26 +13,26 @@ AdjList *new_AdjList(int num, char *nom, int altitude)
     noeud->id = num;
     noeud->nom = nom;
     noeud->altitude = altitude;
-    noeud->suivant = NULL;
+    noeud->next = NULL;
     return noeud;
 }
 
 
 /* Fonction qui affiche une liste d'adjacence */
-void affiche_adjlist(Graphe *grph)
+void affiche_adjlist(Graph *graph)
 {
     int v;
-    for (v = 0; v < grph->nbs; v++)
+    for (v = 0; v < graph->size; v++)
     {
-        AdjList *temp = grph->table[v].suivant;
-        printf("\nListe d'adjacence de %d - %s : \n head ", v, grph->table[v].nom);
+        AdjList *temp = graph->nodes[v].next;
+        printf("\nListe d'adjacence de %d - %s : \n head ", v, graph->nodes[v].nom);
         while (temp != NULL)
         {
             printf("\n -> (%d \"%s\", deniv: %d m)",
                                     temp->id,
                                     temp->nom,
                                     temp->altitude);
-                                    temp = temp->suivant;
+                                    temp = temp->next;
         }
         printf("\n");
     }
@@ -46,7 +46,7 @@ int est_membre(AdjList * l , int id)
         if (id == l->id){
             return 1;
         }
-        l = l->suivant;
+        l = l->next;
     }
     return 0;
 }
@@ -54,7 +54,7 @@ int est_membre(AdjList * l , int id)
 void print_list(AdjList *l){
     if (l != NULL){
         printf("%d ", l->id);
-        print_list(l->suivant);
+        print_list(l->next);
     }
 }
 
@@ -69,7 +69,7 @@ AdjList * select_node(AdjList *l, int id)
             temp = l;
             code_success = 1;
         }
-            l = l->suivant;
+            l = l->next;
     }
     return temp;
 }
