@@ -11,41 +11,41 @@
 int main()
 {
 
-    nodeAdjList *node1 = new_nodeadjlist(1, "test1", 123);
-    nodeAdjList *node2 = new_nodeadjlist(2, "test2", 123);
-    nodeAdjList *node3 = new_nodeadjlist(3, "test3", 123);
-    nodeAdjList *node4 = new_nodeadjlist(4, "test4", 123);
-    nodeAdjList *node5 = new_nodeadjlist(5, "test5", 123);
+    AdjList *node1 = adjList_create(1, "test1", 123);
+    AdjList *node2 = adjList_create(2, "test2", 123);
+    AdjList *node3 = adjList_create(3, "test3", 123);
+    AdjList *node4 = adjList_create(4, "test4", 123);
+    AdjList *node5 = adjList_create(5, "test5", 123);
 
-    node5->suivant = node3;
-    node3->suivant = node1;
-    node1->suivant = node4;
-    node4->suivant = node2;
+    node5->next = node3;
+    node3->next = node1;
+    node1->next = node4;
+    node4->next = node2;
 
     AdjList *li = (AdjList *)malloc(sizeof(AdjList));
     assert(li);
     li->id = 6;
-    li->nom = "Col de test";
+    li->name = "Col de test";
     li->altitude = 50;
-    li->tete = node5;
+    li->next = node5;
 
-    print_list(node5);
+    adjList_print_ids(node5);
     printf("\n");
 
-    int res = est_membre(li->tete, 2);
+    int res = adjList_contains(li->next, 2);
     printf("res = %d \n", res);
 
 
-    
-    nodeAdjList * memberlist = select_node(node5, 2);
+
+    AdjList * memberlist = adjList_get(node5, 2);
     assert(memberlist);
     int id = memberlist->id;
     printf("id noeud selectionné: %d \n", id);
 
-    assert(est_membre(li->tete, 3) == 1);
-    assert(est_membre(li->tete, 7) == 0);
-    assert(est_membre(li->tete, 5) == 1);
-    assert(est_membre(li->tete, 1) == 1);
+    assert(adjList_contains(li->next, 3) == 1);
+    assert(adjList_contains(li->next, 7) == 0);
+    assert(adjList_contains(li->next, 5) == 1);
+    assert(adjList_contains(li->next, 1) == 1);
     assert(id == 2);
 
     free(li);

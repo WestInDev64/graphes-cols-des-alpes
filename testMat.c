@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include "floydwarshall.h"
-#include "graphe.h"
+#include "graph.h"
 #include "listeadj.h"
 
 /* Fichier de test pour tester rapidement des fonctions avant de les implémenter  */

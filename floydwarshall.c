@@ -1,5 +1,5 @@
 #include "floydwarshall.h"
-#include "graphe.h"
+#include "graph.h"
 #include "listeadj.h"
 #include <stddef.h>
 #include <assert.h>
@@ -13,31 +13,31 @@
  * sinon si le sommet destination est un sommet accessible depuis le sommet source
  *       alors on le selectionne et on assigne la valeur de l'altitude
  * sinon on initialise le sommet avec une valeur MAXI INF
- * @param grph : Pointeur de Graphe des sommets
+ * @param graph : Pointeur de Graphe des sommets
  * @param m : pointeur de Matrice des distances
  * @param pred : pointeur de Matrice des prédécesseurs
  */
-void init_matrice(Graphe *grph, Mat *m, Mat *pred)
+void init_matrice(Graph *graph, Mat *m, Mat *pred)
 {
-    assert(grph);
+    assert(graph);
     assert(m);
     assert(pred);
-    m->nbs = grph->nbs;
-    pred->nbs = grph->nbs;
-    nodeAdjList *temp = NULL;
+    m->nbs = graph->size;
+    pred->nbs = graph->size;
+    AdjList *temp = NULL;
 
-    for (int i = 0; i < grph->nbs; i++)
+    for (int i = 0; i < graph->size; i++)
     {
-        for (int j = 0; j < grph->nbs; j++)
+        for (int j = 0; j < graph->size; j++)
         {
             if (i == j)
             {
                 m->mat[i][j] = 0;
                 pred->mat[i][j] = i;
             }
-            else if (est_membre(grph->table[i].tete, j) == 1)
+            else if (adjList_contains(graph->nodes[i].next, j) == 1)
             {
-                temp = select_node(grph->table[i].tete, j);
+                temp = adjList_get(graph->nodes[i].next, j);
                 assert(temp);
                 m->mat[i][j] = temp->altitude;
                 pred->mat[i][j] = i;
@@ -85,12 +85,12 @@ void floydwarshall(Mat *m, Mat *pred)
 /**
  * Calcul le dénivelé cumulé positif d'un chemin
  * @param k : Sommet intermédiaire actuel
- * @param grph : Pointeur du graphe (vecteur des sommets)
+ * @param graph : Pointeur du graphe (vecteur des sommets)
  * @param predpath : vecteur de sommet des prédecesseurs
 */
-int elevation_gain( Graphe *grph,Mat * pred, Path * p)
+int elevation_gain( Graph *graph,Mat * pred, Path * p)
 {
-    assert(grph);
+    assert(graph);
     assert(pred);
     assert(p);
     int gain = 0;
@@ -101,18 +101,18 @@ int elevation_gain( Graphe *grph,Mat * pred, Path * p)
     {
         current = p->path[i];
         next = p->path[i+1];
-        if (grph->table[current].altitude < grph->table[next].altitude)
+        if (graph->nodes[current].altitude < graph->nodes[next].altitude)
         {
-            gain += grph->table[next].altitude - grph->table[current].altitude;
+            gain += graph->nodes[next].altitude - graph->nodes[current].altitude;
         }
     }
     return gain;
 }
 
-void itineraryAtoB(Mat *pred, int src, int dst, Graphe *grph, Path * p)
+void itineraryAtoB(Mat *pred, int src, int dst, Graph *graph, Path * p)
 {
     assert(pred);
-    assert(grph);
+    assert(graph);
     assert(p);
     int i, k;
     int chemin[pred->nbs];
@@ -132,7 +132,7 @@ void itineraryAtoB(Mat *pred, int src, int dst, Graphe *grph, Path * p)
         i++;
     }
     chemin[i] = src;
-    
+
     // Inversement du chemin et initialisation Path
     p->size = i+1;
     p->path = (int*)malloc(sizeof(int)* p->size);
@@ -144,38 +144,38 @@ void itineraryAtoB(Mat *pred, int src, int dst, Graphe *grph, Path * p)
     }
 }
 
-void print_itinerary(Graphe * grph,Path * p, int src, int dst){
-    assert(grph);
+void print_itinerary(Graph * graph,Path * p, int src, int dst){
+    assert(graph);
     assert(p);
     int k;
-    printf("\nVoici le chemin pour aller de 🔰%s à 🏁%s : \n", grph->table[src].nom, grph->table[dst].nom);
+    printf("\nVoici le chemin pour aller de 🔰%s à 🏁%s : \n", graph->nodes[src].name, graph->nodes[dst].name);
     for (k = 0; k < p->size; k++)
     {
-        printf(" -> %s - %d m\n", grph->table[p->path[k]].nom, grph->table[p->path[k]].altitude);
+        printf(" -> %s - %d m\n", graph->nodes[p->path[k]].name, graph->nodes[p->path[k]].altitude);
     }
 }
 
 
 
 // écrire les plus courts chemins en consultant les tableaux m et pred
-void ecrirePlusCourt(Graphe *graphe, Mat *m, Mat *pred)
+void ecrirePlusCourt(Graph *graphe, Mat *m, Mat *pred)
 {
     printf("\n\nPlus court chemin (Floyd)\n");
-    for (int i = 0; i < graphe->nbs; i++)
+    for (int i = 0; i < graphe->size; i++)
     {
-        printf("pour aller de %s à :\n", graphe->table[i].nom);
-        for (int j = 0; j < graphe->nbs; j++)
+        printf("pour aller de %s à :\n", graphe->nodes[i].name);
+        for (int j = 0; j < graphe->size; j++)
         {
             if ((i != j) && (m->mat[i][j] != INF))
             {
                 printf(" %s (cout = %d) : ",
-                       graphe->table[j].nom, m->mat[i][j]);
+                       graphe->nodes[j].name, m->mat[i][j]);
                 int k = pred->mat[i][j];
-                printf("%s, %s", graphe->table[j].nom, graphe->table[k].nom);
+                printf("%s, %s", graphe->nodes[j].name, graphe->nodes[k].name);
                 while (k != i)
                 {
                     k = pred->mat[i][k];
-                    printf(", %s ", graphe->table[k].nom);
+                    printf(", %s ", graphe->nodes[k].name);
                 }
                 printf("\n");
             }
@@ -185,22 +185,22 @@ void ecrirePlusCourt(Graphe *graphe, Mat *m, Mat *pred)
     printf("\n");
 }
 
-void ecrirePlusCourtUnChemin(Graphe *graphe, Mat *m, Mat *pred, int src)
+void ecrirePlusCourtUnChemin(Graph *graphe, Mat *m, Mat *pred, int src)
 {
 
-    printf("pour aller de %s à :\n", graphe->table[src].nom);
-    for (int j = 0; j < graphe->nbs; j++)
+    printf("pour aller de %s à :\n", graphe->nodes[src].name);
+    for (int j = 0; j < graphe->size; j++)
     {
         if ((src != j) && (m->mat[src][j] != INF))
         {
             printf(" %s (cout = %d) : ",
-                   graphe->table[j].nom, m->mat[src][j]);
+                   graphe->nodes[j].name, m->mat[src][j]);
             int k = pred->mat[src][j];
-            printf("%s, %s", graphe->table[j].nom, graphe->table[k].nom);
+            printf("%s, %s", graphe->nodes[j].name, graphe->nodes[k].name);
             while (k != src)
             {
                 k = pred->mat[src][k];
-                printf(", %s ", graphe->table[k].nom);
+                printf(", %s ", graphe->nodes[k].name);
             }
             printf("\n");
         }
