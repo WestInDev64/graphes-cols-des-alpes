@@ -4,21 +4,32 @@ CFLAGS= -Wall -Wextra -Wpedantic
 LEAK= -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address -fsanitize=undefined
 PROGNAME= graph_alpes
 VERSION= 1.2.3
-CSRC= main.c graph.c listeadj.c floydwarshall.c
-#HSRC=
-OBJ= $(CSRC:.c=.o)
 
+BINDIR= bin
+
+SRC= graph.c listeadj.c floydwarshall.c
+CSRC= main.c $(SRC)
+
+OBJDIR= obj
+_OBJ= $(CSRC:.c=.o)
+OBJ= $(addprefix $(OBJDIR)/, $(_OBJ))
 
 all: $(PROGNAME)
 
 dev:
 	$(CC) $(CFLAGS) $(LEAK) -g $(CSRC)
 
-$(PROGNAME): $(OBJ)
-	$(CC) $(OBJ) -o $(PROGNAME)
+$(PROGNAME): $(OBJ) $(BINDIR)
+	$(CC) $(OBJ) -o $(BINDIR)/$(PROGNAME)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $<
+$(OBJDIR)/%.o: %.c $(OBJDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
+$(BINDIR):
+	mkdir $(BINDIR)
 
 clean:
-	@rm -rf $(OBJ) $(PROGNAME) *.out *.dSYM
+	@rm -rf $(OBJDIR) $(BINDIR) *.out *.dSYM
