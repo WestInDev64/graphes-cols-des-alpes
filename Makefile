@@ -7,7 +7,7 @@ VERSION= 1.2.3
 
 BINDIR= bin
 
-SRC= graph.c listeadj.c floydwarshall.c
+SRC= graph.c listeadj.c floydwarshall.c graph_parser.c
 CSRC= main.c $(SRC)
 
 OBJDIR= obj

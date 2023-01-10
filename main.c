@@ -4,14 +4,14 @@
 #include <assert.h>
 #include <time.h>
 #include "graph.h"
+#include "graph_parser.h"
 #include "listeadj.h"
 #include "floydwarshall.h"
 
 int main()
 {
     // Graphe des cols des alpes
-    Graph* graph = graph_parse_nodes("inputs/alpes_noeuds.csv");
-    graph_parse_arcs(graph, "inputs/alpes_arcs.csv");
+    Graph* graph = parse_graph("inputs/alpes_noeuds.csv", "inputs/alpes_arcs.csv");
 
     Mat mat;
     Mat pred;

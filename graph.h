@@ -14,9 +14,6 @@ typedef struct graph
 
 /* internal public functions =========================================== */
 
-Graph *graph_parse_nodes(const char *fileName);
-void graph_parse_arcs(Graph *graph, const char *acsv);
-
 Graph *graph_create(int n);
 void graph_add_arc(Graph *graph, int src, int dest);
 int graph_find_index(Graph *graph, char *token);
