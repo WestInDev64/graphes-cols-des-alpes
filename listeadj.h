@@ -11,18 +11,17 @@
 typedef struct AdjList
 {
     int id;                         // id  et index dans la table du graphe
-    char *nom;                      // Nom du sommet
+    char* name;                      // Nom du sommet
     int altitude;                   // Altitude du sommet
-    struct AdjList *next;    // Sommet suivant accessible depuis celui-ci
+    struct AdjList* next;    // Sommet suivant accessible depuis celui-ci
 } AdjList;
-
 
 /* internal public functions =========================================== */
 
-AdjList *new_AdjList(int num, char *nom, int altitude);
-void affiche_adjlist(Graph *graph);
-int est_membre( AdjList * l, int id);
-void print_list(AdjList *l);
-AdjList *select_node(AdjList *l, int id);
+AdjList* adjList_create(int num, char* nom, int altitude);
+AdjList* adjList_get(AdjList* list, int id);
+int adjList_contains(AdjList* list, int id);
+void adjList_print(Graph* graph);
+void adjList_print_ids(AdjList* l);
 
 #endif // LISTEADJ_H

@@ -99,7 +99,7 @@ static void parse_node(char buff[], const char *separator, AdjList *vec, int nli
     char* p = buff;
 
     token = strtok_r(p, separator, &p);
-    vec[nli].nom = strdup(token);
+    vec[nli].name = strdup(token);
 
     token = strtok_r(p, separator, &p);
     vec[nli].altitude = strtol(token, NULL, 10);

@@ -36,13 +36,13 @@ int main()
 
     if (mat.mat[src][dst] != INF)
     {
-        printf("\nLe dénivelé entre %s et %s est de %d m \n", graph->nodes[src].nom, graph->nodes[dst].nom, mat.mat[src][dst]);
+        printf("\nLe dénivelé entre %s et %s est de %d m \n", graph->nodes[src].name, graph->nodes[dst].name, mat.mat[src][dst]);
         printf("Le dénivelé cumulé positif de l'itinéraire est de %d m D+ \n", elevation_gain(graph, &pred, &p));
         print_itinerary(graph, &p, src, dst);
     }
     else
     {
-        printf("Malheureusement, %s ne permet pas d'atteindre %s selon les données que nous disposons\n", graph->nodes[src].nom, graph->nodes[dst].nom);
+        printf("Malheureusement, %s ne permet pas d'atteindre %s selon les données que nous disposons\n", graph->nodes[src].name, graph->nodes[dst].name);
     }
 
     free(graph);

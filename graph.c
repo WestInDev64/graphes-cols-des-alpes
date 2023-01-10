@@ -21,7 +21,7 @@ Graph *graph_create(int n)
     for (int i = 0; i < n; ++i)
     {
         graphe->nodes[i].id = i;
-        graphe->nodes[i].nom = NULL;
+        graphe->nodes[i].name = NULL;
         graphe->nodes[i].altitude = 0;
         graphe->nodes[i].next = NULL;
     }
@@ -37,12 +37,12 @@ void graph_add_arc(Graph *graph, int src, int dst)
     /** Ajout d'un arc entre un sommet source et un sommet cible
      * Création d'un nouveau noeud de liste adjacente
      */
-    AdjList *new_node = new_AdjList(dst, graph->nodes[dst].nom, denivele);
+    AdjList *new_node = adjList_create(dst, graph->nodes[dst].name, denivele);
     assert(new_node);
     new_node->next = graph->nodes[src].next;
     graph->nodes[src].next = new_node;
 
-    new_node = new_AdjList(src, graph->nodes[src].nom, -denivele);
+    new_node = adjList_create(src, graph->nodes[src].name, -denivele);
     assert(new_node);
     new_node->next = graph->nodes[dst].next;
     graph->nodes[dst].next = new_node;
@@ -60,7 +60,7 @@ int graph_find_index(Graph *graph, char *node_name)
 
     for (int k = 0; k < graph->size; k++)
     {
-        if (strcmp(str, graph->nodes[k].nom) == 0)
+        if (strcmp(str, graph->nodes[k].name) == 0)
         {
             result = k;
             break;
@@ -79,7 +79,7 @@ void graph_print_nodes(Graph *graph)
     {
         printf("%3d\t%34s\t%6d m\n",
                graph->nodes[n].id,
-               graph->nodes[n].nom,
+               graph->nodes[n].name,
                graph->nodes[n].altitude);
     }
 

@@ -6,70 +6,60 @@
 #include <time.h>
 
 /* Crée un noeud de liste d'adjacence */
-AdjList *new_AdjList(int num, char *nom, int altitude)
+AdjList* adjList_create(int id, char* name, int altitude)
 {
-    AdjList *noeud = malloc(sizeof(*noeud));
-    assert(noeud);
-    noeud->id = num;
-    noeud->nom = nom;
-    noeud->altitude = altitude;
-    noeud->next = NULL;
-    return noeud;
+    AdjList* node = malloc(sizeof(*node));
+    assert(node);
+    node->id = id;
+    node->name = name;
+    node->altitude = altitude;
+    node->next = NULL;
+    return node;
 }
 
+AdjList* adjList_get(AdjList* list, int id)
+{
+    assert(id >= 0);
+    while (list != NULL)
+    {
+        if (list->id == id)
+        {
+            return list;
+        }
+        list = list->next;
+    }
+    return NULL;
+}
+
+int adjList_contains(AdjList* list, int id)
+{
+    return adjList_get(list, id) == NULL ? 0 : 1;
+}
 
 /* Fonction qui affiche une liste d'adjacence */
-void affiche_adjlist(Graph *graph)
+void adjList_print(Graph *graph)
 {
-    int v;
-    for (v = 0; v < graph->size; v++)
+    for (int v = 0; v < graph->size; v++)
     {
         AdjList *temp = graph->nodes[v].next;
-        printf("\nListe d'adjacence de %d - %s : \n head ", v, graph->nodes[v].nom);
+        printf("\nListe d'adjacence de %d - %s : \n head ", v, graph->nodes[v].name);
         while (temp != NULL)
         {
             printf("\n -> (%d \"%s\", deniv: %d m)",
-                                    temp->id,
-                                    temp->nom,
-                                    temp->altitude);
-                                    temp = temp->next;
+                   temp->id,
+                   temp->name,
+                   temp->altitude);
+            temp = temp->next;
         }
         printf("\n");
     }
 }
 
-
-int est_membre(AdjList * l , int id)
+void adjList_print_ids(AdjList* list)
 {
-    assert(id >= 0);
-    while(l != NULL){
-        if (id == l->id){
-            return 1;
-        }
-        l = l->next;
-    }
-    return 0;
-}
-
-void print_list(AdjList *l){
-    if (l != NULL){
-        printf("%d ", l->id);
-        print_list(l->next);
-    }
-}
-
-AdjList * select_node(AdjList *l, int id)
-{
-    AdjList *temp = NULL;
-    int code_success = 0;
-    while (l != NULL && code_success == 0)
+    while (list != NULL)
     {
-        if (l->id == id)
-        {
-            temp = l;
-            code_success = 1;
-        }
-            l = l->next;
+        printf("%d ", list->id);
+        list = list->next;
     }
-    return temp;
 }

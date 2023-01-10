@@ -35,9 +35,9 @@ void init_matrice(Graph *graph, Mat *m, Mat *pred)
                 m->mat[i][j] = 0;
                 pred->mat[i][j] = i;
             }
-            else if (est_membre(graph->nodes[i].next, j) == 1)
+            else if (adjList_contains(graph->nodes[i].next, j) == 1)
             {
-                temp = select_node(graph->nodes[i].next, j);
+                temp = adjList_get(graph->nodes[i].next, j);
                 assert(temp);
                 m->mat[i][j] = temp->altitude;
                 pred->mat[i][j] = i;
@@ -148,10 +148,10 @@ void print_itinerary(Graph * graph,Path * p, int src, int dst){
     assert(graph);
     assert(p);
     int k;
-    printf("\nVoici le chemin pour aller de 🔰%s à 🏁%s : \n", graph->nodes[src].nom, graph->nodes[dst].nom);
+    printf("\nVoici le chemin pour aller de 🔰%s à 🏁%s : \n", graph->nodes[src].name, graph->nodes[dst].name);
     for (k = 0; k < p->size; k++)
     {
-        printf(" -> %s - %d m\n", graph->nodes[p->path[k]].nom, graph->nodes[p->path[k]].altitude);
+        printf(" -> %s - %d m\n", graph->nodes[p->path[k]].name, graph->nodes[p->path[k]].altitude);
     }
 }
 
@@ -163,19 +163,19 @@ void ecrirePlusCourt(Graph *graphe, Mat *m, Mat *pred)
     printf("\n\nPlus court chemin (Floyd)\n");
     for (int i = 0; i < graphe->size; i++)
     {
-        printf("pour aller de %s à :\n", graphe->nodes[i].nom);
+        printf("pour aller de %s à :\n", graphe->nodes[i].name);
         for (int j = 0; j < graphe->size; j++)
         {
             if ((i != j) && (m->mat[i][j] != INF))
             {
                 printf(" %s (cout = %d) : ",
-                       graphe->nodes[j].nom, m->mat[i][j]);
+                       graphe->nodes[j].name, m->mat[i][j]);
                 int k = pred->mat[i][j];
-                printf("%s, %s", graphe->nodes[j].nom, graphe->nodes[k].nom);
+                printf("%s, %s", graphe->nodes[j].name, graphe->nodes[k].name);
                 while (k != i)
                 {
                     k = pred->mat[i][k];
-                    printf(", %s ", graphe->nodes[k].nom);
+                    printf(", %s ", graphe->nodes[k].name);
                 }
                 printf("\n");
             }
@@ -188,19 +188,19 @@ void ecrirePlusCourt(Graph *graphe, Mat *m, Mat *pred)
 void ecrirePlusCourtUnChemin(Graph *graphe, Mat *m, Mat *pred, int src)
 {
 
-    printf("pour aller de %s à :\n", graphe->nodes[src].nom);
+    printf("pour aller de %s à :\n", graphe->nodes[src].name);
     for (int j = 0; j < graphe->size; j++)
     {
         if ((src != j) && (m->mat[src][j] != INF))
         {
             printf(" %s (cout = %d) : ",
-                   graphe->nodes[j].nom, m->mat[src][j]);
+                   graphe->nodes[j].name, m->mat[src][j]);
             int k = pred->mat[src][j];
-            printf("%s, %s", graphe->nodes[j].nom, graphe->nodes[k].nom);
+            printf("%s, %s", graphe->nodes[j].name, graphe->nodes[k].name);
             while (k != src)
             {
                 k = pred->mat[src][k];
-                printf(", %s ", graphe->nodes[k].nom);
+                printf(", %s ", graphe->nodes[k].name);
             }
             printf("\n");
         }
